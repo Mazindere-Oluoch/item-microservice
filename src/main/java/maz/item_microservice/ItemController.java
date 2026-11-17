@@ -1,7 +1,6 @@
 package maz.item_microservice;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.net.URI;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/item")
@@ -27,7 +27,13 @@ public class ItemController {
 
     @GetMapping("/{id}")
     public ResponseEntity<?> getItemById(@PathVariable Long id) {
-        return ResponseEntity.ok(itemService.getItemById(id));
+        Optional<Item> item = itemService.getItemById(id);
+
+        if (item.isPresent()) {
+            return ResponseEntity.ok(item.get());
+        }
+
+        return ResponseEntity.notFound().build(); //todo have good exception handling
     }
 
     @PostMapping
